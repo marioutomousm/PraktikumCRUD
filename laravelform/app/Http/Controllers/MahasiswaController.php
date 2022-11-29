@@ -27,11 +27,11 @@ class MahasiswaController extends Controller
             ->orWhere('kelas','LIKE','%'.$keyword.'%')
             ->paginate(5);
 
-        //$data->withPath('/');
-        //$data->appends($request->all());
+        $data->withPath('/dashboard');
+        $data->appends($request->all());
             
-        return view('index',compact('data','keyword'));
-        //-> with(['data' => $data]);
+        return view('index',compact('data','keyword'))
+        -> with(['data' => $data]);
     }
 
     /**
@@ -52,11 +52,14 @@ class MahasiswaController extends Controller
      */
     public function store(MahasiswaRequest $request)
     {
+        // $validationData=$request->validate([
+        //     'nim' => 'required|unique:mahasiswas,nim',
+        // ]);
         $data = $request -> except(['_token']);
 
         mahasiswa::insert($data);
 
-        return redirect('/')->with('success','Data Berhasil Disimpan');
+        return redirect('/dashboard')->with('success','Data Berhasil Disimpan');
     }
 
     /**
@@ -94,12 +97,18 @@ class MahasiswaController extends Controller
      */
     public function update(MahasiswaRequest $request, $id)
     {
-        
+       
         $item = mahasiswa::findOrFail($id);
         $data = $request -> except(['_token']);
+        
+        // $validationData=$request->validate([
+        //     'nim' => 'unique:mahasiswas,nim,'.$id,
+        // ]);
+
+       
         $item -> update($data);
 
-        return redirect('/')->with('success','Data Berhasil Diperbaharui');
+        return redirect('/dashboard')->with('success','Data Berhasil Diperbaharui');
 
     }
 
@@ -113,6 +122,6 @@ class MahasiswaController extends Controller
     {
         $datahapus = mahasiswa::findOrFail($id);
         $datahapus->delete();
-        return redirect('/')->with('danger','Data Berhasil Dihapus');
+        return redirect('/dashboard')->with('danger','Data Berhasil Dihapus');
     }
 }
